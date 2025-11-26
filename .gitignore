@@ -1,0 +1,68 @@
+# OS Files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.settings/
+.classpath
+.project
+
+# Build outputs
+target/
+dist/
+build/
+*.class
+*.jar
+*.war
+*.ear
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Logs
+*.log
+logs/
+
+# Environment variables and secrets
+.env
+.env.local
+.env.*.local
+*.env
+application-local.properties
+application-*.properties
+!application.properties
+
+# Uploads and temporary files
+uploads/
+temp/
+tmp/
+
+# AWS credentials (if accidentally added)
+**/credentials
+**/.aws/
+
+# Database
+*.db
+*.sqlite
+
+# Spring Boot
+HELP.md
+
+# Frontend
+frontend/dist/
+frontend/.angular/
+
+# Backend
+backend/target/
+backend/uploads/
+

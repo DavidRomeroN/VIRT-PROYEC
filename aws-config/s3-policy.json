@@ -1,0 +1,30 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "PublicReadGetObject",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::auditorio-universidad-media/*"
+    },
+    {
+      "Sid": "AllowPutObject",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::TU_ACCOUNT_ID:user/TU_IAM_USER"
+      },
+      "Action": [
+        "s3:PutObject",
+        "s3:PutObjectAcl",
+        "s3:DeleteObject"
+      ],
+      "Resource": "arn:aws:s3:::auditorio-universidad-media/*"
+    }
+  ]
+}
+
+
+
+
+
