@@ -1,5 +1,6 @@
 package com.universidad.auditorio.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,12 +20,14 @@ public class Reserva {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "auditorio_id", nullable = false)
+    @JsonIgnoreProperties(value = {"reservas"}, allowSetters = true) // Evitar serialización circular
     private Auditorio auditorio;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_id", nullable = false)
+    @JsonIgnoreProperties(value = {"reservas", "password"}, allowSetters = true) // Evitar serialización circular y no exponer password
     private Usuario usuario;
     
     @Column(name = "fecha", nullable = false)

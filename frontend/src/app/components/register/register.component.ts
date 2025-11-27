@@ -13,13 +13,12 @@ import { Usuario } from '../../models/usuario.model';
     <div class="register-container">
       <div class="register-card fade-in">
         <div class="register-header">
-          <div class="register-icon">👤</div>
           <h2>Crear Cuenta</h2>
           <p class="register-subtitle">Únete a nuestro sistema de reservas</p>
         </div>
         
         <div *ngIf="error" class="alert alert-error fade-in">
-          <span class="alert-icon">⚠️</span>
+          <span class="alert-icon">!</span>
           <span>{{ error }}</span>
         </div>
         <div *ngIf="success" class="alert alert-success fade-in">
@@ -62,7 +61,6 @@ import { Usuario } from '../../models/usuario.model';
 
           <div class="form-group">
             <label>
-              <span class="label-icon">📧</span>
               Correo Electrónico
             </label>
             <input 
@@ -77,7 +75,6 @@ import { Usuario } from '../../models/usuario.model';
 
           <div class="form-group">
             <label>
-              <span class="label-icon">🔒</span>
               Contraseña
             </label>
             <input 
@@ -96,7 +93,6 @@ import { Usuario } from '../../models/usuario.model';
             class="btn btn-primary btn-full" 
             [disabled]="loading"
           >
-            <span *ngIf="!loading">✨</span>
             <span *ngIf="loading" class="spinner-small"></span>
             <span>{{ loading ? 'Registrando...' : 'Crear Cuenta' }}</span>
           </button>
@@ -138,6 +134,7 @@ import { Usuario } from '../../models/usuario.model';
     .register-icon {
       font-size: 64px;
       margin-bottom: 16px;
+      display: none;
       animation: bounce 2s ease-in-out infinite;
     }
     
@@ -262,7 +259,19 @@ export class RegisterComponent {
         }, 2000);
       },
       error: (err) => {
-        this.error = err.error?.message || 'Error al registrar usuario';
+        let errorMessage = 'Error al registrar usuario';
+        if (err.error) {
+          if (typeof err.error === 'string') {
+            errorMessage = err.error.replace('Error: ', '');
+          } else if (err.error.message) {
+            errorMessage = err.error.message;
+          } else if (err.error.error) {
+            errorMessage = err.error.error;
+          }
+        } else if (err.message) {
+          errorMessage = err.message;
+        }
+        this.error = errorMessage;
         this.loading = false;
       }
     });

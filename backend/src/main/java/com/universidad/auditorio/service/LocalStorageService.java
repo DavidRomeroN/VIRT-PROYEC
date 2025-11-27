@@ -66,6 +66,12 @@ public class LocalStorageService {
                 int index = key.indexOf("/auditorios/");
                 if (index != -1) {
                     fileKey = key.substring(index + 1);
+                } else {
+                    // También puede ser usuarios/imagenes
+                    index = key.indexOf("/usuarios/");
+                    if (index != -1) {
+                        fileKey = key.substring(index + 1);
+                    }
                 }
             }
             

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RouterOutlet, RouterModule, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs/operators';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -11,36 +12,38 @@ import { filter } from 'rxjs/operators';
     <div class="app-container">
       <header class="header">
         <div class="container">
-          <div class="header-brand">
-            <div class="logo">🏛️</div>
-            <h1>Sistema de Reserva de Auditorios</h1>
-          </div>
           <nav class="nav-menu">
             <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-              <span class="nav-icon">🏠</span>
               <span class="nav-text">Inicio</span>
             </a>
             <a routerLink="/auditorios" routerLinkActive="active">
-              <span class="nav-icon">🎭</span>
               <span class="nav-text">Auditorios</span>
             </a>
             <a routerLink="/reservas" routerLinkActive="active" *ngIf="isLoggedIn">
-              <span class="nav-icon">📋</span>
               <span class="nav-text">Mis Reservas</span>
             </a>
-            <div class="nav-divider" *ngIf="!isLoggedIn"></div>
+            <a routerLink="/admin" routerLinkActive="active" *ngIf="isAdmin">
+              <span class="nav-text">Administración</span>
+            </a>
+            <div class="nav-divider" *ngIf="isLoggedIn"></div>
             <a routerLink="/login" routerLinkActive="active" *ngIf="!isLoggedIn" class="btn-login">
-              <span class="nav-icon">🔐</span>
               <span class="nav-text">Iniciar Sesión</span>
             </a>
-            <a routerLink="/register" routerLinkActive="active" *ngIf="!isLoggedIn" class="btn-register">
-              <span class="nav-text">Registrarse</span>
-            </a>
             <a (click)="logout()" *ngIf="isLoggedIn" class="btn-logout">
-              <span class="nav-icon">🚪</span>
               <span class="nav-text">Cerrar Sesión</span>
             </a>
           </nav>
+          <div class="header-brand">
+            <img src="https://lamb-academic.upeu.edu.pe/student-portal/assets/logos/lamb-logo-white.svg" 
+                 alt="LAMB University" 
+                 class="logo-img"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div class="logo-fallback" style="display: none;">LAMB</div>
+            <div class="university-info">
+              <h1 class="university-name">LAMB University</h1>
+              <p class="university-subtitle">Sistema de Reserva de Auditorios</p>
+            </div>
+          </div>
         </div>
       </header>
       <main class="main-content fade-in">
@@ -61,15 +64,15 @@ import { filter } from 'rxjs/operators';
     }
     
     .header {
-      background: rgba(255, 255, 255, 0.98);
+      background: var(--primary-color);
       padding: 16px 0;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
       margin-bottom: 0;
       position: sticky;
       top: 0;
       z-index: 1000;
       backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+      border-bottom: 2px solid var(--primary-dark);
     }
     
     .header .container {
@@ -80,13 +83,29 @@ import { filter } from 'rxjs/operators';
       gap: 20px;
     }
     
+    .nav-menu {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      order: 1;
+    }
+    
     .header-brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 16px;
+      order: 2;
+      margin-left: auto;
     }
     
-    .logo {
+    .logo-img {
+      height: 55px;
+      width: auto;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+    
+    .logo-fallback {
       font-size: 32px;
       animation: pulse 2s ease-in-out infinite;
     }
@@ -96,27 +115,32 @@ import { filter } from 'rxjs/operators';
       50% { transform: scale(1.1); }
     }
     
-    .header h1 {
-      color: #667eea;
-      font-size: 22px;
-      font-weight: 700;
-      margin: 0;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .university-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
     }
     
-    .nav-menu {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      flex-wrap: wrap;
+    .university-name {
+      color: white;
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0;
+      line-height: 1.2;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    
+    .university-subtitle {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 13px;
+      font-weight: 400;
+      margin: 0;
+      line-height: 1.2;
     }
     
     .nav-menu a {
       text-decoration: none;
-      color: #333;
+      color: white;
       font-weight: 500;
       padding: 10px 16px;
       border-radius: 10px;
@@ -130,15 +154,15 @@ import { filter } from 'rxjs/operators';
     }
     
     .nav-menu a:hover {
-      background: rgba(102, 126, 234, 0.1);
-      color: #667eea;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
       transform: translateY(-2px);
     }
     
     .nav-menu a.active {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: rgba(255, 255, 255, 0.3);
       color: white;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
     
     .nav-icon {
@@ -157,28 +181,17 @@ import { filter } from 'rxjs/operators';
     }
     
     .btn-login {
-      background: rgba(102, 126, 234, 0.1);
-      color: #667eea;
-    }
-    
-    .btn-register {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: rgba(255, 255, 255, 0.2);
       color: white;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-    }
-    
-    .btn-register:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
     }
     
     .btn-logout {
-      color: #dc3545;
+      color: white;
     }
     
     .btn-logout:hover {
-      background: rgba(220, 53, 69, 0.1);
-      color: #dc3545;
+      background: rgba(220, 53, 69, 0.3);
+      color: white;
     }
     
     .main-content {
@@ -222,10 +235,14 @@ import { filter } from 'rxjs/operators';
 })
 export class AppComponent implements OnInit {
   isLoggedIn = false;
+  isAdmin = false;
   currentYear = new Date().getFullYear();
   showFooter = true;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   ngOnInit() {
     this.checkLoginStatus();
@@ -239,7 +256,9 @@ export class AppComponent implements OnInit {
   }
 
   checkLoginStatus() {
-    this.isLoggedIn = !!localStorage.getItem('currentUser');
+    this.isLoggedIn = this.authService.isLoggedIn();
+    const user = this.authService.getCurrentUser();
+    this.isAdmin = user?.rol === 'ADMINISTRADOR';
   }
 
   logout() {

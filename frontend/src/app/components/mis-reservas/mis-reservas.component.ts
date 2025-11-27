@@ -33,12 +33,12 @@ import { Reserva } from '../../models/reserva.model';
             <div class="reserva-header">
               <h3>{{ reserva.auditorio?.nombre || 'Auditorio' }}</h3>
               <span class="badge" [ngClass]="getEstadoClass(reserva.estado)">
-                {{ reserva.estado }}
+                {{ reserva.estado || 'PENDIENTE' }}
               </span>
             </div>
             <div class="reserva-details">
-              <p><strong>Fecha:</strong> {{ reserva.fecha | date:'dd/MM/yyyy' }}</p>
-              <p><strong>Hora:</strong> {{ reserva.horaInicio }} - {{ reserva.horaFin }}</p>
+              <p><strong>Fecha:</strong> {{ formatDate(reserva.fecha) }}</p>
+              <p><strong>Hora:</strong> {{ formatTime(reserva.horaInicio) }} - {{ formatTime(reserva.horaFin) }}</p>
               <p *ngIf="reserva.motivo"><strong>Motivo:</strong> {{ reserva.motivo }}</p>
               <p *ngIf="reserva.observaciones"><strong>Observaciones:</strong> {{ reserva.observaciones }}</p>
             </div>
@@ -54,11 +54,21 @@ import { Reserva } from '../../models/reserva.model';
     </div>
   `,
   styles: [`
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      margin: 20px;
+    }
+    
     h2 {
-      color: white;
+      color: var(--primary-color);
       margin-bottom: 30px;
       font-size: 36px;
       text-align: center;
+      font-weight: 700;
     }
     .reservas-list {
       display: flex;
@@ -171,6 +181,29 @@ export class MisReservasComponent implements OnInit {
 
   getEstadoClass(estado?: string): string {
     return estado || 'PENDIENTE';
+  }
+
+  formatDate(dateString: string): string {
+    if (!dateString) return '';
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('es-ES', { 
+        day: '2-digit', 
+        month: '2-digit', 
+        year: 'numeric' 
+      });
+    } catch {
+      return dateString;
+    }
+  }
+
+  formatTime(timeString: string): string {
+    if (!timeString) return '';
+    // Si viene en formato HH:mm:ss, tomar solo HH:mm
+    if (timeString.includes(':')) {
+      return timeString.substring(0, 5);
+    }
+    return timeString;
   }
 }
 

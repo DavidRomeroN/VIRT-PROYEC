@@ -34,8 +34,23 @@ public class ReservaController {
     }
 
     @GetMapping("/usuario/{usuarioId}")
-    public ResponseEntity<List<Reserva>> getReservasByUsuario(@PathVariable Long usuarioId) {
-        return ResponseEntity.ok(reservaService.getReservasByUsuario(usuarioId));
+    public ResponseEntity<?> getReservasByUsuario(@PathVariable Long usuarioId) {
+        try {
+            List<Reserva> reservas = reservaService.getReservasByUsuario(usuarioId);
+            // Log para debugging
+            System.out.println("Reservas encontradas para usuario " + usuarioId + ": " + reservas.size());
+            return ResponseEntity.ok(reservas);
+        } catch (RuntimeException e) {
+            System.err.println("RuntimeException al obtener reservas: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Exception al obtener reservas: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al obtener reservas: " + e.getMessage());
+        }
     }
 
     @GetMapping("/auditorio/{auditorioId}/fecha")

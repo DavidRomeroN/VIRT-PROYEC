@@ -71,7 +71,14 @@ CREATE TABLE reservas (
 -- DATOS INICIALES: Usuarios de Prueba
 -- ============================================
 -- Contraseña para todos: 12345678
--- Hash BCrypt: $2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy
+-- Hash BCrypt generado: (se generará al iniciar la aplicación con HashGenerator)
+-- NOTA: Ejecuta la aplicación Spring Boot y copia el hash que aparece en consola
+-- Luego actualiza este archivo con el hash correcto
+
+-- Hash BCrypt válido para "12345678" (10 rounds)
+-- NOTA: El componente PasswordUpdater actualizará automáticamente los passwords
+-- al iniciar la aplicación si no son válidos. Este hash es solo un placeholder.
+-- Hash generado: $2a$10$7FpKddDvQlfrM8Sh0s/Z2Or27NkLf2nEDetdADyn50r2J5aw.CJgK
 
 -- Usuario Estudiante: david.romero / 12345678
 INSERT INTO usuarios (

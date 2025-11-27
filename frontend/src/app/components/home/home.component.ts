@@ -19,11 +19,9 @@ import { Auditorio } from '../../models/auditorio.model';
           <p class="hero-subtitle">Gestiona tus reservas de manera fácil, rápida y eficiente</p>
           <div class="hero-actions">
             <a routerLink="/auditorios" class="btn btn-primary btn-large">
-              <span>🎭</span>
               <span>Explorar Auditorios</span>
             </a>
             <a routerLink="/reservas" class="btn btn-outline btn-large" *ngIf="isLoggedIn">
-              <span>📋</span>
               <span>Mis Reservas</span>
             </a>
           </div>
@@ -59,15 +57,21 @@ import { Auditorio } from '../../models/auditorio.model';
   styles: [`
     .home-container {
       min-height: calc(100vh - 200px);
+      position: relative;
     }
     
     .hero-section {
       position: relative;
       text-align: center;
-      padding: 80px 20px;
-      color: white;
+      padding: 100px 20px;
+      color: var(--primary-color);
       overflow: hidden;
       margin-bottom: 80px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 0 0 32px 32px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      margin: 0 20px 80px 20px;
     }
     
     .hero-content {
@@ -86,24 +90,24 @@ import { Auditorio } from '../../models/auditorio.model';
     
     .title-line {
       display: block;
-      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+      color: var(--primary-color);
+      font-weight: 600;
     }
     
     .title-highlight {
       display: block;
-      background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+      background: var(--gradient-primary);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      text-shadow: none;
+      font-weight: 800;
     }
     
     .hero-subtitle {
-      font-size: clamp(18px, 2.5vw, 28px);
+      font-size: clamp(18px, 2.5vw, 24px);
       margin-bottom: 40px;
-      opacity: 0.95;
-      font-weight: 300;
-      text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+      color: var(--light-text);
+      font-weight: 400;
     }
     
     .hero-actions {
@@ -129,12 +133,13 @@ import { Auditorio } from '../../models/auditorio.model';
       height: 100%;
       z-index: 1;
       pointer-events: none;
+      opacity: 0.1;
     }
     
     .decoration-circle {
       position: absolute;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.1);
+      background: var(--gradient-primary);
       animation: float 6s ease-in-out infinite;
     }
     
@@ -168,20 +173,21 @@ import { Auditorio } from '../../models/auditorio.model';
     }
     
     .features-section {
-      padding: 60px 20px;
-      background: rgba(255, 255, 255, 0.1);
+      padding: 80px 20px;
+      background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
-      border-radius: 24px;
-      margin: 40px 0;
+      border-radius: 32px;
+      margin: 40px 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.8);
     }
     
     .section-title {
       text-align: center;
-      color: white;
+      color: var(--primary-color);
       font-size: clamp(28px, 4vw, 42px);
       margin-bottom: 50px;
       font-weight: 700;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
     }
     
     .features-grid {
@@ -197,10 +203,24 @@ import { Auditorio } from '../../models/auditorio.model';
       padding: 40px 30px;
       border-radius: 20px;
       text-align: center;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       animation: fadeInUp 0.6s ease-out both;
-      border: 1px solid rgba(102, 126, 234, 0.1);
+      border: 2px solid rgba(26, 35, 126, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--gradient-primary);
+      transform: scaleX(0);
+      transition: transform 0.4s ease;
     }
     
     @keyframes fadeInUp {
@@ -215,14 +235,19 @@ import { Auditorio } from '../../models/auditorio.model';
     }
     
     .feature-card:hover {
-      transform: translateY(-10px) scale(1.02);
-      box-shadow: 0 20px 40px rgba(102, 126, 234, 0.25);
+      transform: translateY(-8px);
+      box-shadow: 0 12px 32px rgba(26, 35, 126, 0.15);
+      border-color: var(--primary-color);
+    }
+    
+    .feature-card:hover::before {
+      transform: scaleX(1);
     }
     
     .feature-icon {
       font-size: 64px;
       margin-bottom: 20px;
-      display: block;
+      display: none;
       animation: bounce 2s ease-in-out infinite;
     }
     
@@ -232,16 +257,16 @@ import { Auditorio } from '../../models/auditorio.model';
     }
     
     .feature-title {
-      color: #667eea;
+      color: var(--primary-color);
       margin-bottom: 16px;
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 700;
     }
     
     .feature-description {
-      color: #666;
-      line-height: 1.6;
-      font-size: 16px;
+      color: var(--light-text);
+      line-height: 1.7;
+      font-size: 15px;
     }
     
     .stats-section {
@@ -303,36 +328,36 @@ import { Auditorio } from '../../models/auditorio.model';
 })
 export class HomeComponent implements OnInit {
   isLoggedIn = false;
-  stats: any[] = null;
+  stats: any[] | null = null;
 
   features = [
     {
-      icon: '📅',
+      icon: '',
       title: 'Reserva Fácil',
       description: 'Reserva auditorios con fecha, día y hora de manera sencilla e intuitiva. Proceso rápido y sin complicaciones.'
     },
     {
-      icon: '📋',
+      icon: '',
       title: 'Gestión Completa',
       description: 'Administra todas tus reservas desde un solo lugar. Visualiza, edita y cancela cuando lo necesites.'
     },
     {
-      icon: '🎥',
+      icon: '',
       title: 'Multimedia',
       description: 'Visualiza fotos y videos de alta calidad de los auditorios disponibles antes de reservar.'
     },
     {
-      icon: '⚡',
+      icon: '',
       title: 'Rápido y Eficiente',
       description: 'Sistema optimizado para ofrecerte la mejor experiencia de usuario con tiempos de respuesta mínimos.'
     },
     {
-      icon: '🔔',
+      icon: '',
       title: 'Notificaciones',
       description: 'Recibe confirmaciones y recordatorios de tus reservas para que nunca olvides un evento importante.'
     },
     {
-      icon: '🔒',
+      icon: '',
       title: 'Seguro y Confiable',
       description: 'Tus datos están protegidos con las mejores prácticas de seguridad y privacidad.'
     }

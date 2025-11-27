@@ -1,6 +1,6 @@
 package com.universidad.auditorio.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -41,7 +41,7 @@ public class Auditorio {
     private Boolean activo = true;
     
     @OneToMany(mappedBy = "auditorio", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"auditorio", "usuario"}) // Evitar serialización circular
+    @JsonIgnore // No serializar la lista de reservas desde Auditorio
     private List<Reserva> reservas;
 }
 

@@ -17,22 +17,21 @@ import { Usuario } from '../../models/usuario.model';
     <div class="reserva-container">
       <div class="reserva-card fade-in">
         <div class="reserva-header">
-          <h2>📅 Nueva Reserva</h2>
+          <h2>Nueva Reserva</h2>
           <p class="reserva-subtitle">Completa el formulario para realizar tu reserva</p>
         </div>
         
         <div *ngIf="auditorio" class="auditorio-info-card">
           <div class="auditorio-info-header">
-            <span class="auditorio-icon">🏛️</span>
             <div>
               <h3>{{ auditorio.nombre }}</h3>
               <div class="auditorio-details">
                 <span class="detail-item">
-                  <span class="detail-icon">👥</span>
+                  <span class="detail-icon">Cap.</span>
                   <span>{{ auditorio.capacidad }} personas</span>
                 </span>
                 <span class="detail-item" *ngIf="auditorio.ubicacion">
-                  <span class="detail-icon">📍</span>
+                  <span class="detail-icon">Ubic.</span>
                   <span>{{ auditorio.ubicacion }}</span>
                 </span>
               </div>
@@ -41,7 +40,7 @@ import { Usuario } from '../../models/usuario.model';
         </div>
 
         <div *ngIf="error" class="alert alert-error fade-in">
-          <span class="alert-icon">⚠️</span>
+          <span class="alert-icon">!</span>
           <span>{{ error }}</span>
         </div>
         <div *ngIf="success" class="alert alert-success fade-in">
@@ -53,7 +52,6 @@ import { Usuario } from '../../models/usuario.model';
           <div class="form-row">
             <div class="form-group">
               <label>
-                <span class="label-icon">📆</span>
                 Fecha de Reserva
               </label>
               <input 
@@ -70,7 +68,6 @@ import { Usuario } from '../../models/usuario.model';
           <div class="form-row">
             <div class="form-group">
               <label>
-                <span class="label-icon">🕐</span>
                 Hora de Inicio
               </label>
               <input 
@@ -84,7 +81,6 @@ import { Usuario } from '../../models/usuario.model';
 
             <div class="form-group">
               <label>
-                <span class="label-icon">🕐</span>
                 Hora de Fin
               </label>
               <input 
@@ -99,7 +95,6 @@ import { Usuario } from '../../models/usuario.model';
 
           <div class="form-group">
             <label>
-              <span class="label-icon">📝</span>
               Motivo de la Reserva
             </label>
             <textarea 
@@ -118,7 +113,6 @@ import { Usuario } from '../../models/usuario.model';
               class="btn btn-primary btn-large" 
               [disabled]="loading"
             >
-              <span *ngIf="!loading">✓</span>
               <span *ngIf="loading" class="spinner-small"></span>
               <span>{{ loading ? 'Reservando...' : 'Confirmar Reserva' }}</span>
             </button>
@@ -129,7 +123,7 @@ import { Usuario } from '../../models/usuario.model';
         </form>
 
         <div *ngIf="!auditorio && !loading" class="empty-state">
-          <div class="empty-icon">❌</div>
+          <div class="empty-icon">X</div>
           <h3>Auditorio no encontrado</h3>
           <p>El auditorio que buscas no existe o no está disponible.</p>
           <a routerLink="/auditorios" class="btn btn-primary">Volver a Auditorios</a>
@@ -188,6 +182,7 @@ import { Usuario } from '../../models/usuario.model';
     .auditorio-icon {
       font-size: 48px;
       flex-shrink: 0;
+      display: none;
     }
     
     .auditorio-info-header h3 {
@@ -387,12 +382,15 @@ export class ReservaFormComponent implements OnInit {
         let errorMessage = 'Error al crear la reserva';
         if (err.error) {
           if (typeof err.error === 'string') {
-            errorMessage = err.error;
+            // Si el backend devuelve un string directo (ej: "Error: El auditorio ya está reservado...")
+            errorMessage = err.error.replace('Error: ', '');
           } else if (err.error.message) {
             errorMessage = err.error.message;
           } else if (err.error.error) {
             errorMessage = err.error.error;
           }
+        } else if (err.message) {
+          errorMessage = err.message;
         }
         this.error = errorMessage;
         this.loading = false;

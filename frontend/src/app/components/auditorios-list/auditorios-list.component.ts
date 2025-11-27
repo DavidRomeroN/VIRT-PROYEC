@@ -11,7 +11,7 @@ import { Auditorio } from '../../models/auditorio.model';
   template: `
     <div class="auditorios-container">
       <div class="page-header fade-in">
-        <h1 class="page-title">🎭 Auditorios Disponibles</h1>
+        <h1 class="page-title">Auditorios Disponibles</h1>
         <p class="page-subtitle">Explora nuestros espacios y encuentra el perfecto para tu evento</p>
       </div>
       
@@ -21,12 +21,12 @@ import { Auditorio } from '../../models/auditorio.model';
       </div>
       
       <div *ngIf="error" class="alert alert-error fade-in">
-        <span class="alert-icon">⚠️</span>
+        <span class="alert-icon">!</span>
         <span>{{ error }}</span>
       </div>
       
       <div *ngIf="!loading && !error && auditorios.length === 0" class="empty-state fade-in">
-        <div class="empty-icon">🏛️</div>
+        <div class="empty-icon">A</div>
         <h3>No hay auditorios disponibles</h3>
         <p>Por el momento no hay auditorios activos en el sistema.</p>
       </div>
@@ -44,22 +44,22 @@ import { Auditorio } from '../../models/auditorio.model';
               </div>
             </div>
             <div class="auditorio-image-placeholder" *ngIf="!auditorio.imagenUrl">
-              <span class="placeholder-icon">🏛️</span>
+              <span class="placeholder-icon">A</span>
             </div>
             <div class="auditorio-badge" *ngIf="auditorio.activo">
-              <span>✓ Disponible</span>
+              <span>Disponible</span>
             </div>
           </div>
           <div class="auditorio-content">
             <h3 class="auditorio-name">{{ auditorio.nombre }}</h3>
             <div class="auditorio-info">
               <div class="info-item">
-                <span class="info-icon">👥</span>
+                <span class="info-icon">Cap.</span>
                 <span class="info-label">Capacidad:</span>
                 <span class="info-value">{{ auditorio.capacidad }} personas</span>
               </div>
               <div class="info-item" *ngIf="auditorio.ubicacion">
-                <span class="info-icon">📍</span>
+                <span class="info-icon">Ubic.</span>
                 <span class="info-label">Ubicación:</span>
                 <span class="info-value">{{ auditorio.ubicacion }}</span>
               </div>
@@ -68,8 +68,10 @@ import { Auditorio } from '../../models/auditorio.model';
               {{ auditorio.descripcion }}
             </p>
             <div class="auditorio-actions">
+              <a [routerLink]="['/auditorios', auditorio.id]" class="btn btn-outline btn-full">
+                <span>Ver Detalles</span>
+              </a>
               <a [routerLink]="['/reservar', auditorio.id]" class="btn btn-primary btn-full">
-                <span>📅</span>
                 <span>Reservar Ahora</span>
               </a>
             </div>
@@ -86,20 +88,27 @@ import { Auditorio } from '../../models/auditorio.model';
     .page-header {
       text-align: center;
       margin-bottom: 50px;
-      color: white;
+      color: var(--primary-color);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 40px 20px;
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      margin: 0 20px 50px 20px;
     }
     
     .page-title {
       font-size: clamp(32px, 5vw, 48px);
       font-weight: 800;
       margin-bottom: 16px;
-      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+      color: var(--primary-color);
     }
     
     .page-subtitle {
       font-size: clamp(16px, 2vw, 20px);
-      opacity: 0.95;
-      font-weight: 300;
+      color: var(--light-text);
+      font-weight: 400;
+      margin: 0;
     }
     
     .loading-container {

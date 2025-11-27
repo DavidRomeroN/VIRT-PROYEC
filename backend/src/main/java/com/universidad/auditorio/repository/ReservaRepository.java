@@ -12,10 +12,17 @@ import java.util.List;
 
 @Repository
 public interface ReservaRepository extends JpaRepository<Reserva, Long> {
-    List<Reserva> findByAuditorioId(Long auditorioId);
-    List<Reserva> findByUsuarioId(Long usuarioId);
+    @Query("SELECT DISTINCT r FROM Reserva r JOIN FETCH r.auditorio JOIN FETCH r.usuario")
+    List<Reserva> findAllWithRelations();
     
-    @Query("SELECT r FROM Reserva r WHERE r.auditorio.id = :auditorioId " +
+    @Query("SELECT DISTINCT r FROM Reserva r JOIN FETCH r.auditorio JOIN FETCH r.usuario WHERE r.auditorio.id = :auditorioId")
+    List<Reserva> findByAuditorioId(@Param("auditorioId") Long auditorioId);
+    
+    @Query("SELECT DISTINCT r FROM Reserva r JOIN FETCH r.auditorio JOIN FETCH r.usuario WHERE r.usuario.id = :usuarioId")
+    List<Reserva> findByUsuarioId(@Param("usuarioId") Long usuarioId);
+    
+    @Query("SELECT r FROM Reserva r JOIN FETCH r.auditorio JOIN FETCH r.usuario " +
+           "WHERE r.auditorio.id = :auditorioId " +
            "AND r.fecha = :fecha " +
            "AND r.estado != 'CANCELADA' " +
            "AND ((r.horaInicio <= :horaInicio AND r.horaFin > :horaInicio) OR " +
@@ -28,7 +35,8 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
         @Param("horaFin") LocalTime horaFin
     );
     
-    @Query("SELECT r FROM Reserva r WHERE r.auditorio.id = :auditorioId AND r.fecha = :fecha")
+    @Query("SELECT r FROM Reserva r JOIN FETCH r.auditorio JOIN FETCH r.usuario " +
+           "WHERE r.auditorio.id = :auditorioId AND r.fecha = :fecha")
     List<Reserva> findByAuditorioAndFecha(@Param("auditorioId") Long auditorioId, @Param("fecha") LocalDate fecha);
 }
 

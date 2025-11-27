@@ -12,13 +12,12 @@ import { AuthService } from '../../services/auth.service';
     <div class="login-container">
       <div class="login-card fade-in">
         <div class="login-header">
-          <div class="login-icon">🔐</div>
           <h2>Iniciar Sesión</h2>
           <p class="login-subtitle">Ingresa a tu cuenta para continuar</p>
         </div>
         
         <div *ngIf="error" class="alert alert-error fade-in">
-          <span class="alert-icon">⚠️</span>
+          <span class="alert-icon">!</span>
           <span>{{ error }}</span>
         </div>
         <div *ngIf="success" class="alert alert-success fade-in">
@@ -29,32 +28,33 @@ import { AuthService } from '../../services/auth.service';
         <form (ngSubmit)="onSubmit()" class="login-form">
           <div class="form-group">
             <label>
-              <span class="label-icon">📧</span>
-              Correo Electrónico
+              Usuario (nombre.apellido)
             </label>
             <input 
-              type="email" 
+              type="text" 
               [(ngModel)]="email" 
               name="email" 
-              placeholder="tu@email.com"
+              placeholder="david.romero"
               required 
               [disabled]="loading"
             />
+            <small>Ingresa tu nombre y apellido en formato: nombre.apellido</small>
           </div>
 
           <div class="form-group">
             <label>
-              <span class="label-icon">🔒</span>
-              Contraseña
+              DNI (Contraseña)
             </label>
             <input 
               type="password" 
               [(ngModel)]="password" 
               name="password" 
-              placeholder="••••••••"
+              placeholder="12345678"
               required 
               [disabled]="loading"
+              maxlength="8"
             />
+            <small>Ingresa tu DNI de 8 dígitos</small>
           </div>
 
           <button 
@@ -62,17 +62,10 @@ import { AuthService } from '../../services/auth.service';
             class="btn btn-primary btn-full" 
             [disabled]="loading"
           >
-            <span *ngIf="!loading">🚀</span>
             <span *ngIf="loading" class="spinner-small"></span>
             <span>{{ loading ? 'Iniciando sesión...' : 'Iniciar Sesión' }}</span>
           </button>
 
-          <div class="login-footer">
-            <p>
-              ¿No tienes cuenta? 
-              <a routerLink="/register" class="link-primary">Regístrate aquí</a>
-            </p>
-          </div>
         </form>
       </div>
     </div>
@@ -87,13 +80,14 @@ import { AuthService } from '../../services/auth.service';
     }
     
     .login-card {
-      background: white;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(10px);
       border-radius: 24px;
       padding: 48px 40px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
       max-width: 450px;
       width: 100%;
-      border: 1px solid rgba(102, 126, 234, 0.1);
+      border: 2px solid rgba(26, 35, 126, 0.1);
     }
     
     .login-header {
@@ -213,7 +207,17 @@ export class LoginComponent {
         }, 1000);
       },
       error: (err) => {
-        this.error = err.error?.message || 'Credenciales inválidas';
+        let errorMessage = 'Credenciales inválidas';
+        if (err.error) {
+          if (typeof err.error === 'string') {
+            errorMessage = err.error;
+          } else if (err.error.message) {
+            errorMessage = err.error.message;
+          }
+        } else if (err.message) {
+          errorMessage = err.message;
+        }
+        this.error = errorMessage;
         this.loading = false;
       }
     });
