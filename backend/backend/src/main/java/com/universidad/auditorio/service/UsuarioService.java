@@ -70,54 +70,54 @@ public class UsuarioService {
         if (usuario.getDni() == null || usuario.getDni().length() != 8 || !usuario.getDni().matches("\\d{8}")) {
             throw new RuntimeException("El DNI debe tener 8 dígitos");
         }
-        
+
         // Validar código universitario
-        if (usuario.getCodigoUniversitario() == null || usuario.getCodigoUniversitario().length() != 9 || 
+        if (usuario.getCodigoUniversitario() == null || usuario.getCodigoUniversitario().length() != 9 ||
             !usuario.getCodigoUniversitario().matches("\\d{9}")) {
             throw new RuntimeException("El código universitario debe tener 9 dígitos");
         }
-        
+
         // Validar que no exista el DNI
         if (usuarioRepository.existsByDni(usuario.getDni())) {
             throw new RuntimeException("El DNI ya está registrado");
         }
-        
+
         // Validar que no exista el código universitario
         if (usuarioRepository.existsByCodigoUniversitario(usuario.getCodigoUniversitario())) {
             throw new RuntimeException("El código universitario ya está registrado");
         }
-        
+
         // Generar email si no se proporciona
         if (usuario.getEmail() == null || usuario.getEmail().isEmpty()) {
             usuario.setEmail(generarEmail(usuario.getNombre(), usuario.getApellido()));
         }
-        
+
         // Validar que el email no exista
         if (usuarioRepository.existsByEmail(usuario.getEmail())) {
             throw new RuntimeException("El email ya está registrado");
         }
-        
+
         // La contraseña es el DNI (hasheado)
         usuario.setPassword(passwordEncoder.encode(usuario.getDni()));
-        
+
         return usuarioRepository.save(usuario);
     }
 
     public Usuario updateUsuario(Long id, Usuario usuarioDetails) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        
+
         usuario.setNombre(usuarioDetails.getNombre());
         usuario.setApellido(usuarioDetails.getApellido());
-        
+
         if (usuarioDetails.getPassword() != null && !usuarioDetails.getPassword().isEmpty()) {
             usuario.setPassword(passwordEncoder.encode(usuarioDetails.getPassword()));
         }
-        
+
         if (usuarioDetails.getRol() != null) {
             usuario.setRol(usuarioDetails.getRol());
         }
-        
+
         return usuarioRepository.save(usuario);
     }
 
@@ -132,36 +132,33 @@ public class UsuarioService {
     public String uploadImagen(Long usuarioId, MultipartFile file) throws Exception {
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        
-        String key; // Guardar solo la llave, no la URL completa
-        
-        // Intentar usar S3, si falla usar almacenamiento local
+
+        String key;
+
         try {
-            System.out.println("Intentando subir imagen de usuario a S3...");
-            // Eliminar imagen anterior si existe
+            // Eliminar anterior de S3
             if (usuario.getImagenKey() != null) {
                 s3Service.deleteFile(usuario.getImagenKey());
             }
+            // Subir nueva
             key = s3Service.uploadFile(file, "usuarios/imagenes");
-            System.out.println("✓ Imagen de usuario subida exitosamente a S3 con key: " + key);
         } catch (Exception e) {
-            // S3 no está configurado o hay error, usar almacenamiento local
-            System.err.println("✗ Error al subir a S3: " + e.getMessage());
-            System.err.println("  Causa: " + (e.getCause() != null ? e.getCause().getMessage() : "N/A"));
-            System.out.println("Usando almacenamiento local como fallback...");
+            // Fallback local
             if (usuario.getImagenKey() != null) {
                 localStorageService.deleteFile(usuario.getImagenKey());
             }
             key = localStorageService.uploadFile(file, "usuarios/imagenes");
-            System.out.println("✓ Imagen de usuario guardada localmente con key: " + key);
         }
-        
-        // Guardar solo la llave en la BD
+
         usuario.setImagenKey(key);
         usuarioRepository.save(usuario);
-        
-        // Retornar URL completa para el frontend
-        return fileUrlService.buildUrl(key);
+
+        // CORRECCIÓN: Retornar URL presignada de S3
+        String url = s3Service.getPresignedUrl(key);
+        if (url == null) {
+            url = "http://localhost:8080/" + key; // Fallback local
+        }
+        return url;
     }
 }
 

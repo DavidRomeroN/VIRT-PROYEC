@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/reservas")
-@CrossOrigin(origins = "*")
+// Nota: CORS se maneja globalmente en SecurityConfig
 @RequiredArgsConstructor
 public class ReservaController {
 

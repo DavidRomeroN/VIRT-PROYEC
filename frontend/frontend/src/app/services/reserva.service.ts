@@ -7,7 +7,8 @@ import { Reserva, ReservaCreateDTO } from '../models/reserva.model';
   providedIn: 'root'
 })
 export class ReservaService {
-  private apiUrl = 'http://localhost:8080/api/reservas';
+  //private apiUrl = 'http://alb-auditorio-1270223617.us-east-1.elb.amazonaws.com/api/reservas';
+    private apiUrl = '/api/reservas';
 
   constructor(private http: HttpClient) {}
 

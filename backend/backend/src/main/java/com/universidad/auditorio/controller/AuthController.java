@@ -12,7 +12,8 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*")
+// Nota: CORS se maneja globalmente en SecurityConfig
+// Removido @CrossOrigin(origins = "*") porque entra en conflicto con allowCredentials
 @RequiredArgsConstructor
 public class AuthController {
 

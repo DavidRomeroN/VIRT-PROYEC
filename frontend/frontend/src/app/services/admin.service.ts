@@ -8,7 +8,8 @@ import { Auditorio } from '../models/auditorio.model';
   providedIn: 'root'
 })
 export class AdminService {
-  private apiUrl = 'http://localhost:8080/api/admin';
+  //private apiUrl = 'http://alb-auditorio-1270223617.us-east-1.elb.amazonaws.com/api/admin';
+    private apiUrl = '/api/admin';
 
   constructor(private http: HttpClient) {}
 

@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/usuarios")
-@CrossOrigin(origins = "*")
+// Nota: CORS se maneja globalmente en SecurityConfig
 @RequiredArgsConstructor
 public class UsuarioController {
 

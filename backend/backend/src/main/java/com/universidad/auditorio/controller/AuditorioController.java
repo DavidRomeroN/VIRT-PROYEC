@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/auditorios")
-@CrossOrigin(origins = "*")
+// Nota: CORS se maneja globalmente en SecurityConfig
 @RequiredArgsConstructor
 public class AuditorioController {
 
@@ -47,41 +47,35 @@ public class AuditorioController {
             @RequestParam(value = "imagen", required = false) MultipartFile imagen,
             @RequestParam(value = "video", required = false) MultipartFile video) {
         try {
-            // Crear el auditorio
             Auditorio auditorio = new Auditorio();
             auditorio.setNombre(nombre);
             auditorio.setCapacidad(capacidad);
             auditorio.setDescripcion(descripcion);
             auditorio.setUbicacion(ubicacion);
             auditorio.setActivo(activo);
-            
+
+            // 1. Guardar entidad base para tener ID
             Auditorio creado = auditorioService.createAuditorio(auditorio);
-            
-            // Si hay imagen, subirla
+
+            // 2. Subir archivos si existen (esto actualiza las keys en BD)
             if (imagen != null && !imagen.isEmpty()) {
                 auditorioService.uploadImagen(creado.getId(), imagen);
             }
-            
-            // Si hay video, subirlo
             if (video != null && !video.isEmpty()) {
                 auditorioService.uploadVideo(creado.getId(), video);
             }
-            
-            // Recargar el auditorio para obtener las keys actualizadas
-            creado = auditorioService.getAuditorioById(creado.getId())
-                    .orElse(creado);
-            
-            // Retornar DTO con URLs completas
+
+            // 3. Recargar entidad actualizada desde BD
+            creado = auditorioService.getAuditorioById(creado.getId()).orElse(creado);
+
+            // 4. Convertir a DTO (AQUÍ SE GENERAN LAS URLS FIRMADAS)
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(auditorioService.toDTO(creado));
+
         } catch (RuntimeException e) {
-            // Error de validación (nombre duplicado, etc.)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace(); // Para debugging
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al crear auditorio: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
     }
 

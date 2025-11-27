@@ -7,7 +7,8 @@ import { Usuario } from '../models/usuario.model';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api/auth';
+  //private apiUrl = 'http://alb-auditorio-1270223617.us-east-1.elb.amazonaws.com/api/auth';
+    private apiUrl = '/api/auth';
 
   constructor(private http: HttpClient) {}
 
